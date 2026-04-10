@@ -1,0 +1,56 @@
+<div class="mega-menu-balades">
+  <div class="mega-menu-balades__inner page-width">
+
+    <!-- COLONNES DU MENU -->
+    <div class="mega-menu-balades__columns">
+      {%- for childlink in link.links -%}
+        <div class="mega-menu-balades__column">
+          <h3 class="mega-menu-balades__title">
+            <a href="{{ childlink.url }}">{{ childlink.title }}</a>
+          </h3>
+
+          {%- if childlink.links.size > 0 -%}
+            <ul class="mega-menu-balades__list">
+              {%- for sublink in childlink.links -%}
+                <li class="mega-menu-balades__item">
+                  <a href="{{ sublink.url }}">{{ sublink.title }}</a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+
+    <!-- IMAGES À DROITE -->
+    <div class="mega-menu-balades__images">
+
+     <img
+  src="https://cdn.shopify.com/s/files/1/0682/2284/5122/files/1_f39b0d62-61f5-4d0c-8802-f6a7173b2ae5.png?v=1764701973"
+  alt="Solutions de Séchage CozzyPaws"
+  loading="lazy"
+  width="200"
+  height="200"
+/>
+
+
+     <img
+  src="https://cdn.shopify.com/s/files/1/0682/2284/5122/files/bf8e53df-a58e-43d5-9e22-d6d7320871f3.png?v=1764705952"
+  alt="Voyager avec votre chien"
+  loading="lazy"
+  width="200"
+  height="200"
+/>
+    <img
+  src="https://cdn.shopify.com/s/files/1/0682/2284/5122/files/Generated_Image_September_27_2025_-_10_17PM.png?v=1759008005"
+  alt="Voyager avec votre chien"
+  loading="lazy"
+  width="200"
+  height="200"
+/>
+
+
+    </div>
+
+  </div>
+</div>
