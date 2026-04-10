@@ -1,0 +1,192 @@
+{% comment %}
+  CozzyPaws Premium Product Card
+  Replaces or augments Dawn's card-product snippet with:
+  - Best seller / New / Sale badges
+  - Star rating display
+  - Hover quick-add
+  - Better price hierarchy
+
+  Usage:
+  {% render 'cp-product-card',
+    card_product: product,
+    show_rating: true,
+    show_quick_add: true,
+    badge_label: 'Best seller'
+  %}
+
+  Params:
+    card_product    — product object (required)
+    show_rating     — show star rating (default: true)
+    show_quick_add  — show hover quick add (default: true)
+    badge_label     — override badge text (optional)
+    image_ratio     — 'square' | 'portrait' | 'landscape' (default: 'square')
+    lazy            — loading lazy (default: true)
+{% endcomment %}
+
+{%- liquid
+  assign cp_product  = card_product
+  assign cp_ratio    = image_ratio | default: 'square'
+  assign cp_lazy     = lazy | default: true
+  assign cp_rating   = show_rating | default: true
+  assign cp_qa       = show_quick_add | default: true
+
+  assign cp_variant  = cp_product.selected_or_first_available_variant
+
+  assign cp_on_sale  = false
+  if cp_variant.compare_at_price > cp_variant.price
+    assign cp_on_sale = true
+  endif
+
+  assign cp_sold_out = true
+  if cp_product.available
+    assign cp_sold_out = false
+  endif
+
+  assign cp_badge = badge_label
+  if cp_badge == blank
+    if cp_sold_out
+      assign cp_badge = 'Épuisé'
+    elsif cp_on_sale
+      assign cp_sale_pct = cp_variant.compare_at_price | minus: cp_variant.price | times: 100 | divided_by: cp_variant.compare_at_price
+      assign cp_badge = '-' | append: cp_sale_pct | append: '%'
+    endif
+  endif
+-%}
+
+<div class="cp-card{% if cp_sold_out %} cp-card--sold-out{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+
+  <div class="cp-card__media-wrap">
+    <a
+      href="{{ cp_product.url }}"
+      class="cp-card__media-link"
+      aria-label="{{ cp_product.title | escape }}"
+      tabindex="-1"
+    >
+      {%- if cp_product.featured_image -%}
+        {%- assign cp_img_width = 600 -%}
+        {{
+          cp_product.featured_image
+          | image_url: width: cp_img_width
+          | image_tag:
+            class: 'cp-card__img cp-card__img--primary',
+            widths: '300, 450, 600',
+            sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 50vw',
+            loading: cp_lazy,
+            alt: cp_product.featured_image.alt | default: cp_product.title | escape
+        }}
+        {%- comment %} Second image on hover (if exists) {% endcomment -%}
+        {%- if cp_product.images[1] -%}
+          {{
+            cp_product.images[1]
+            | image_url: width: cp_img_width
+            | image_tag:
+              class: 'cp-card__img cp-card__img--secondary',
+              widths: '300, 450, 600',
+              sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 50vw',
+              loading: 'lazy',
+              alt: cp_product.images[1].alt | default: cp_product.title | escape
+          }}
+        {%- endif -%}
+      {%- else -%}
+        <div class="cp-card__img-placeholder">
+          {{ 'product-apparel-2' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {%- endif -%}
+    </a>
+
+    {%- comment %} Badge -%}{% endcomment -%}
+    {%- if cp_badge != blank -%}
+      <div class="cp-card__badge{% if cp_sold_out %} cp-card__badge--sold-out{% elsif cp_on_sale %} cp-card__badge--sale{% else %} cp-card__badge--custom{% endif %}">
+        {{ cp_badge }}
+      </div>
+    {%- endif -%}
+
+    {%- comment %} Quick add — hover -%}{% endcomment -%}
+    {%- if cp_qa and cp_product.available -%}
+      {%- if cp_product.variants.size == 1 -%}
+        <button
+          type="button"
+          class="cp-card__quick-add"
+          data-product-id="{{ cp_variant.id }}"
+          aria-label="Ajouter {{ cp_product.title | escape }} au panier"
+        >
+          Ajouter au panier
+        </button>
+      {%- else -%}
+        <a
+          href="{{ cp_product.url }}"
+          class="cp-card__quick-add cp-card__quick-add--variants"
+        >
+          Choisir les options
+        </a>
+      {%- endif -%}
+    {%- elsif cp_sold_out -%}
+      <div class="cp-card__sold-out-overlay">Épuisé</div>
+    {%- endif -%}
+  </div>
+
+  {%- comment %} Card info -%}{% endcomment -%}
+  <div class="cp-card__info">
+
+    {%- if cp_rating -%}
+      <div class="cp-card__stars" aria-label="4.9 étoiles sur 5">
+        <span class="cp-card__stars-fill" aria-hidden="true">★★★★★</span>
+        <span class="cp-card__stars-count">({{ cp_product.metafields.reviews.rating_count | default: '4.9' }})</span>
+      </div>
+    {%- endif -%}
+
+    <h3 class="cp-card__title">
+      <a href="{{ cp_product.url }}" class="cp-card__title-link">
+        {{ cp_product.title | escape }}
+      </a>
+    </h3>
+
+    <div class="cp-card__price">
+      {%- if cp_on_sale -%}
+        <span class="cp-card__price-sale">{{ cp_variant.price | money }}</span>
+        <s class="cp-card__price-compare">{{ cp_variant.compare_at_price | money }}</s>
+      {%- else -%}
+        <span class="cp-card__price-regular">{{ cp_variant.price | money }}</span>
+      {%- endif -%}
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function() {
+  // Quick add handler — scoped to this card's button
+  var btns = document.querySelectorAll('.cp-card__quick-add[data-product-id]');
+  btns.forEach(function(btn) {
+    if (btn.dataset.cpBound) return;
+    btn.dataset.cpBound = '1';
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      var id = this.dataset.productId;
+      var b = this;
+      var orig = b.textContent;
+      b.textContent = '...';
+      b.disabled = true;
+      var fd = new FormData();
+      fd.append('id', id);
+      fd.append('quantity', '1');
+      fetch(window.routes ? window.routes.cart_add_url : '/cart/add.js', { method: 'POST', body: fd })
+        .then(function(r) { return r.json(); })
+        .then(function() {
+          b.textContent = '✓ Ajouté !';
+          b.style.background = '#1a8f2e';
+          document.dispatchEvent(new CustomEvent('cart:refresh'));
+          setTimeout(function() {
+            b.textContent = orig;
+            b.style.background = '';
+            b.disabled = false;
+          }, 1800);
+        })
+        .catch(function() {
+          b.textContent = orig;
+          b.disabled = false;
+        });
+    });
+  });
+})();
+</script>
