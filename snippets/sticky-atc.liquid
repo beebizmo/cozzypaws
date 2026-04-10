@@ -1,0 +1,146 @@
+{% comment %}
+  Sticky Add to Cart Bar — CozzyPaws
+  Rendered in theme.liquid. Activates only on product pages.
+  Appears when the main ATC button scrolls out of view on mobile.
+  Shows: product image thumbnail + title + price + ATC button
+{% endcomment %}
+
+{%- if request.page_type == 'product' -%}
+<div
+  id="cp-sticky-atc"
+  class="cp-sticky-atc"
+  aria-hidden="true"
+  role="complementary"
+  aria-label="Ajouter au panier rapide"
+>
+  <div class="cp-sticky-atc__inner page-width">
+    <div class="cp-sticky-atc__product">
+      {%- if product.featured_image -%}
+        <img
+          src="{{ product.featured_image | image_url: width: 80 }}"
+          alt="{{ product.featured_image.alt | escape }}"
+          width="40"
+          height="40"
+          loading="lazy"
+          class="cp-sticky-atc__thumb"
+        >
+      {%- endif -%}
+      <div class="cp-sticky-atc__info">
+        <span class="cp-sticky-atc__title">{{ product.title | escape | truncate: 35 }}</span>
+        <span class="cp-sticky-atc__price">
+          {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
+            <s>{{ product.selected_or_first_available_variant.compare_at_price | money }}</s>
+          {%- endif -%}
+          {{ product.selected_or_first_available_variant.price | money }}
+        </span>
+      </div>
+    </div>
+    <button
+      type="button"
+      class="cp-sticky-atc__btn button"
+      id="cp-sticky-atc-btn"
+      data-product-id="{{ product.selected_or_first_available_variant.id }}"
+      aria-label="Ajouter {{ product.title | escape }} au panier"
+      {%- unless product.selected_or_first_available_variant.available -%}disabled{%- endunless -%}
+    >
+      {%- if product.selected_or_first_available_variant.available -%}
+        Commander
+      {%- else -%}
+        Épuisé
+      {%- endif -%}
+    </button>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  const stickyBar = document.getElementById('cp-sticky-atc');
+  if (!stickyBar) return;
+
+  // Find the main product form ATC button
+  const mainAtc = document.querySelector('.product-form__submit, [name="add"]');
+  if (!mainAtc) return;
+
+  let ticking = false;
+
+  function updateStickyBar() {
+    const rect = mainAtc.getBoundingClientRect();
+    const isOutOfView = rect.bottom < 0;
+
+    if (isOutOfView) {
+      stickyBar.classList.add('cp-sticky-atc--visible');
+      stickyBar.setAttribute('aria-hidden', 'false');
+    } else {
+      stickyBar.classList.remove('cp-sticky-atc--visible');
+      stickyBar.setAttribute('aria-hidden', 'true');
+    }
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      window.requestAnimationFrame(updateStickyBar);
+      ticking = true;
+    }
+  }, { passive: true });
+
+  // Handle sticky ATC button click — submits main product form
+  const stickyBtn = document.getElementById('cp-sticky-atc-btn');
+  if (stickyBtn) {
+    stickyBtn.addEventListener('click', function() {
+      const variantId = this.dataset.productId;
+      const formData = new FormData();
+      formData.append('id', variantId);
+      formData.append('quantity', '1');
+
+      stickyBtn.textContent = '...';
+      stickyBtn.disabled = true;
+
+      fetch(window.routes.cart_add_url, {
+        method: 'POST',
+        body: formData,
+      })
+      .then(res => res.json())
+      .then(() => {
+        stickyBtn.textContent = '✓ Ajouté !';
+        stickyBtn.style.background = '#1a8f2e';
+        // Trigger cart update event so notification / drawer refreshes
+        document.dispatchEvent(new CustomEvent('cart:refresh'));
+        setTimeout(() => {
+          stickyBtn.textContent = 'Commander';
+          stickyBtn.style.background = '';
+          stickyBtn.disabled = false;
+        }, 2000);
+      })
+      .catch(() => {
+        stickyBtn.textContent = 'Réessayer';
+        stickyBtn.disabled = false;
+      });
+    });
+  }
+
+  // Keep sticky button in sync with variant changes
+  document.addEventListener('variant:change', function(e) {
+    if (!e.detail || !e.detail.variant) return;
+    const v = e.detail.variant;
+    if (stickyBtn) {
+      stickyBtn.dataset.productId = v.id;
+      stickyBtn.disabled = !v.available;
+      stickyBtn.textContent = v.available ? 'Commander' : 'Épuisé';
+    }
+    // Update price
+    const priceEl = stickyBar.querySelector('.cp-sticky-atc__price');
+    if (priceEl && v.price) {
+      let html = '';
+      if (v.compare_at_price > v.price) {
+        html += '<s>' + Shopify.formatMoney(v.compare_at_price) + '</s> ';
+      }
+      html += Shopify.formatMoney(v.price);
+      priceEl.innerHTML = html;
+    }
+  });
+})();
+</script>
+{%- endif -%}

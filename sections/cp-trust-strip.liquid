@@ -1,0 +1,28 @@
+{{ 'cp-premium.css' | asset_url | stylesheet_tag }}
+
+<div class="cp-trust-strip-section color-{{ section.settings.color_scheme }}">
+  <div class="page-width">
+    {%- render 'trust-badges', style: 'horizontal', show_text: true -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Trust Strip",
+  "tag": "section",
+  "class": "cp-trust-strip-section-wrapper",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust Strip"
+    }
+  ]
+}
+{% endschema %}

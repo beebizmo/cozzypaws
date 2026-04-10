@@ -1,0 +1,1044 @@
+/*
+ * CozzyPaws Premium Design System
+ * ================================
+ * Overrides & enhancements on top of Dawn base theme.
+ * Brand palette: Burgundy #521010 / Cream #f1ece6 / Dark #1a1a1a
+ *
+ * TABLE OF CONTENTS
+ * 1. Design Tokens (CSS Custom Properties)
+ * 2. Typography Upgrades
+ * 3. Button System
+ * 4. Card System
+ * 5. Section Spacing & Rhythm
+ * 6. Header Enhancements
+ * 7. Product Page
+ * 8. Collection Grid
+ * 9. Cart & Drawer
+ * 10. Trust Badges
+ * 11. Sticky ATC Bar
+ * 12. WhatsApp Button
+ * 13. Guarantee Strip
+ * 14. Urgency Bar
+ * 15. Announcement Bar
+ * 16. Homepage Sections
+ * 17. Footer
+ * 18. Animations
+ * 19. Mobile-Specific Fixes
+ */
+
+/* ==========================================================================
+   1. DESIGN TOKENS
+   ========================================================================== */
+
+:root {
+  /* Brand Colors */
+  --cp-burgundy:          #521010;
+  --cp-burgundy-dark:     #3d0c0c;
+  --cp-burgundy-light:    #7a1a1a;
+  --cp-cream:             #f1ece6;
+  --cp-cream-dark:        #e6dfd7;
+  --cp-cream-light:       #faf7f4;
+  --cp-dark:              #1a1a1a;
+  --cp-mid:               #4a4a4a;
+  --cp-muted:             #888;
+  --cp-green-success:     #1a8f2e;
+  --cp-green-light:       #e8f5ea;
+
+  /* Typography */
+  --cp-font-heading:      'Playfair Display', 'Georgia', serif;
+  --cp-font-body:         'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --cp-font-mono:         'Courier New', monospace;
+
+  /* Spacing Scale */
+  --cp-space-1:   4px;
+  --cp-space-2:   8px;
+  --cp-space-3:   12px;
+  --cp-space-4:   16px;
+  --cp-space-5:   24px;
+  --cp-space-6:   32px;
+  --cp-space-7:   48px;
+  --cp-space-8:   64px;
+  --cp-space-9:   80px;
+  --cp-space-10:  120px;
+
+  /* Border Radius */
+  --cp-radius-sm:  6px;
+  --cp-radius-md:  12px;
+  --cp-radius-lg:  20px;
+  --cp-radius-xl:  32px;
+  --cp-radius-full: 9999px;
+
+  /* Shadows */
+  --cp-shadow-sm:   0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+  --cp-shadow-md:   0 4px 12px rgba(82,16,16,.12), 0 2px 4px rgba(0,0,0,.06);
+  --cp-shadow-lg:   0 10px 30px rgba(82,16,16,.15), 0 4px 8px rgba(0,0,0,.08);
+  --cp-shadow-btn:  0 4px 14px rgba(82,16,16,.28);
+
+  /* Transitions */
+  --cp-transition-fast:   150ms ease;
+  --cp-transition-base:   250ms ease;
+  --cp-transition-slow:   400ms ease;
+
+  /* Sticky ATC height for body offset */
+  --cp-sticky-atc-height: 70px;
+}
+
+/* ==========================================================================
+   2. TYPOGRAPHY UPGRADES
+   ========================================================================== */
+
+/*
+ * Font import: Load from Google Fonts via Shopify CDN workaround.
+ * In Shopify Admin > Theme Settings > Typography, set:
+ *   Heading font: Playfair Display
+ *   Body font:    DM Sans
+ * The CSS below adds fallback enhancements regardless.
+ */
+
+/* Heading base styles */
+h1, .h1,
+h2, .h2,
+h3, .h3,
+.product__title h1,
+.product__title h2 {
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  font-weight: 700;
+}
+
+h1, .h1 { font-size: clamp(2rem, 5vw, 3.2rem); }
+h2, .h2 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); }
+h3, .h3 { font-size: clamp(1.3rem, 2.5vw, 1.8rem); }
+
+/* Body copy tightening */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+p { line-height: 1.7; }
+
+/* Price — more visual weight */
+.price--large .price-item--regular,
+.price--large .price-item--sale {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: var(--cp-burgundy);
+  letter-spacing: -0.01em;
+}
+
+.price-item--regular .price__badge-sale,
+.price--on-sale .price-item--regular {
+  color: var(--cp-muted);
+  font-weight: 400;
+  font-size: 1.4rem;
+  text-decoration: line-through;
+}
+
+/* ==========================================================================
+   3. BUTTON SYSTEM
+   ========================================================================== */
+
+.button,
+.btn,
+button.shopify-payment-button__button,
+.product-form__submit {
+  border-radius: var(--cp-radius-full) !important;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: background var(--cp-transition-base),
+              transform var(--cp-transition-fast),
+              box-shadow var(--cp-transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Primary button (solid) */
+.button:not(.button--secondary):not(.button--tertiary),
+.product-form__submit:not([disabled]) {
+  background: var(--cp-burgundy) !important;
+  color: var(--cp-cream) !important;
+  border-color: var(--cp-burgundy) !important;
+  box-shadow: var(--cp-shadow-btn);
+}
+
+.button:not(.button--secondary):not(.button--tertiary):hover,
+.product-form__submit:not([disabled]):hover {
+  background: var(--cp-burgundy-dark) !important;
+  box-shadow: 0 6px 20px rgba(82,16,16,.35);
+  transform: translateY(-1px);
+}
+
+.button:not(.button--secondary):not(.button--tertiary):active,
+.product-form__submit:not([disabled]):active {
+  transform: translateY(0);
+  box-shadow: var(--cp-shadow-sm);
+}
+
+/* Disabled state */
+.button[disabled],
+.product-form__submit[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Secondary button (outline) */
+.button--secondary {
+  background: transparent !important;
+  border: 2px solid var(--cp-burgundy) !important;
+  color: var(--cp-burgundy) !important;
+}
+
+.button--secondary:hover {
+  background: var(--cp-burgundy) !important;
+  color: var(--cp-cream) !important;
+}
+
+/* ==========================================================================
+   4. CARD SYSTEM
+   ========================================================================== */
+
+.card-wrapper,
+.card {
+  border-radius: var(--cp-radius-md);
+  overflow: hidden;
+  transition: transform var(--cp-transition-base),
+              box-shadow var(--cp-transition-base);
+}
+
+.card-wrapper:hover,
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--cp-shadow-lg);
+}
+
+.card__media img {
+  transition: transform var(--cp-transition-slow);
+}
+
+.card-wrapper:hover .card__media img {
+  transform: scale(1.04);
+}
+
+/* Card text area */
+.card__content,
+.card__information {
+  padding: var(--cp-space-4) var(--cp-space-4) var(--cp-space-5);
+}
+
+.card__heading {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: var(--cp-space-2);
+  line-height: 1.3;
+}
+
+/* Badge */
+.badge {
+  border-radius: var(--cp-radius-full);
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.04em;
+  padding: 3px 10px;
+}
+
+/* ==========================================================================
+   5. SECTION SPACING & RHYTHM
+   ========================================================================== */
+
+/* Force minimum vertical breathing room between all sections */
+.shopify-section + .shopify-section {
+  margin-top: var(--cp-space-7);
+}
+
+/* Reduce excessive top margin on first section after header */
+.shopify-section:first-of-type {
+  margin-top: 0;
+}
+
+/* Rich text sections */
+.rich-text__wrapper {
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Section headings */
+.section-header,
+[class*="__heading"],
+.title {
+  margin-bottom: var(--cp-space-5);
+}
+
+/* ==========================================================================
+   6. HEADER ENHANCEMENTS
+   ========================================================================== */
+
+/* Top accent line */
+.section-header::before {
+  content: '';
+  display: block;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cp-burgundy), var(--cp-burgundy-light));
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+}
+
+.header-wrapper {
+  position: relative;
+}
+
+/* Logo size correction */
+.header__heading-logo {
+  max-height: 48px;
+  width: auto;
+}
+
+/* Cart icon — add a count bubble glow */
+.cart-count-bubble {
+  background: var(--cp-burgundy) !important;
+  color: var(--cp-cream) !important;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: var(--cp-radius-full);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 2px var(--cp-cream);
+}
+
+/* Sticky header shadow on scroll */
+.shopify-section-header-sticky .header-wrapper {
+  box-shadow: 0 2px 16px rgba(0,0,0,.08);
+}
+
+/* ==========================================================================
+   7. PRODUCT PAGE
+   ========================================================================== */
+
+/* Product info container */
+.product__info-container {
+  padding-left: var(--cp-space-5);
+}
+
+@media (max-width: 749px) {
+  .product__info-container {
+    padding-left: 0;
+  }
+}
+
+/* Product title */
+.product__title h1 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  color: var(--cp-dark);
+  margin-bottom: var(--cp-space-3);
+}
+
+/* Price block */
+#price-{{ section.id }} {
+  margin-bottom: var(--cp-space-4);
+}
+
+/* Variant pills */
+.variant-pills__input:checked + .variant-pills__label {
+  background: var(--cp-burgundy);
+  border-color: var(--cp-burgundy);
+  color: var(--cp-cream);
+}
+
+/* Gallery image border */
+.product__media-item img {
+  border-radius: var(--cp-radius-md);
+}
+
+/* Product thumbnail active state */
+.product__media-toggle[aria-current="true"],
+.thumbnail-slider__button[aria-current="true"] {
+  border-color: var(--cp-burgundy);
+  border-width: 2px;
+}
+
+/* Collapsible tabs / FAQ on product page */
+.product__accordion summary {
+  font-weight: 600;
+  padding: var(--cp-space-4) 0;
+  cursor: pointer;
+  border-bottom: 1px solid var(--cp-cream-dark);
+  list-style: none;
+}
+
+.product__accordion .accordion__content {
+  padding: var(--cp-space-4) 0;
+  color: var(--cp-mid);
+  line-height: 1.7;
+}
+
+/* ==========================================================================
+   8. COLLECTION GRID
+   ========================================================================== */
+
+/* Product grid gap — overrides the 8px default */
+.grid--2-col-tablet,
+.grid--3-col-tablet,
+.grid--4-col-desktop {
+  gap: var(--cp-space-5) !important;
+}
+
+@media (max-width: 749px) {
+  .grid--2-col-tablet {
+    gap: var(--cp-space-3) !important;
+  }
+}
+
+/* Quick add button */
+.quick-add__submit {
+  border-radius: var(--cp-radius-full) !important;
+  font-size: 1.2rem;
+  font-weight: 600;
+  background: var(--cp-burgundy) !important;
+  color: var(--cp-cream) !important;
+}
+
+/* Collection banner */
+.collection-hero {
+  border-radius: var(--cp-radius-md);
+  overflow: hidden;
+  margin-bottom: var(--cp-space-6);
+}
+
+/* Filter tags */
+.facets__disclosure-horizontal .disclosure-has-popup > .button {
+  border-radius: var(--cp-radius-full);
+  border: 1.5px solid var(--cp-cream-dark);
+}
+
+.facets__disclosure-horizontal .disclosure-has-popup > .button:hover {
+  border-color: var(--cp-burgundy);
+  color: var(--cp-burgundy);
+}
+
+/* Active filter badge */
+.active-facets__button {
+  border-radius: var(--cp-radius-full);
+  background: var(--cp-cream-dark);
+  border: none;
+}
+
+/* ==========================================================================
+   9. CART & NOTIFICATION
+   ========================================================================== */
+
+/* Cart notification popup */
+.cart-notification {
+  border-radius: var(--cp-radius-md);
+  box-shadow: var(--cp-shadow-lg);
+  border: none;
+}
+
+.cart-notification__heading {
+  font-weight: 700;
+  color: var(--cp-burgundy);
+}
+
+/* Cart drawer (when enabled) */
+.cart-drawer {
+  border-radius: var(--cp-radius-lg) var(--cp-radius-lg) 0 0;
+}
+
+@media (min-width: 750px) {
+  .cart-drawer {
+    border-radius: var(--cp-radius-lg) 0 0 var(--cp-radius-lg);
+  }
+}
+
+.cart-drawer__header {
+  border-bottom: 1px solid var(--cp-cream-dark);
+  padding-bottom: var(--cp-space-4);
+}
+
+/* Checkout button in cart */
+.cart__cta .button,
+.cart__checkout-button {
+  width: 100%;
+  font-size: 1.6rem;
+  padding: var(--cp-space-4) var(--cp-space-5);
+  border-radius: var(--cp-radius-full) !important;
+  background: var(--cp-burgundy) !important;
+  box-shadow: var(--cp-shadow-btn);
+}
+
+/* ==========================================================================
+   10. TRUST BADGES
+   ========================================================================== */
+
+.cp-trust-badges {
+  display: flex;
+  align-items: center;
+  gap: var(--cp-space-6);
+  padding: var(--cp-space-5) 0;
+  flex-wrap: wrap;
+}
+
+.cp-trust-badges--horizontal {
+  justify-content: center;
+}
+
+.cp-trust-badges--vertical {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--cp-space-4);
+}
+
+.cp-trust-badges__item {
+  display: flex;
+  align-items: center;
+  gap: var(--cp-space-3);
+  flex-shrink: 0;
+}
+
+.cp-trust-badges__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--cp-radius-full);
+  background: var(--cp-cream-dark);
+  color: var(--cp-burgundy);
+  flex-shrink: 0;
+}
+
+.cp-trust-badges__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.cp-trust-badges__text strong {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--cp-dark);
+}
+
+.cp-trust-badges__text small {
+  font-size: 1.15rem;
+  color: var(--cp-muted);
+}
+
+@media (max-width: 749px) {
+  .cp-trust-badges--horizontal {
+    gap: var(--cp-space-4);
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: var(--cp-space-3);
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .cp-trust-badges--horizontal::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cp-trust-badges__text {
+    display: none;
+  }
+
+  .cp-trust-badges__icon {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* ==========================================================================
+   11. STICKY ATC BAR
+   ========================================================================== */
+
+.cp-sticky-atc {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: #fff;
+  border-top: 1px solid var(--cp-cream-dark);
+  box-shadow: 0 -4px 20px rgba(0,0,0,.10);
+  transform: translateY(100%);
+  transition: transform var(--cp-transition-base);
+  height: var(--cp-sticky-atc-height);
+  display: flex;
+  align-items: center;
+  /* only show on mobile by default */
+}
+
+.cp-sticky-atc--visible {
+  transform: translateY(0);
+}
+
+.cp-sticky-atc__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cp-space-4);
+  width: 100%;
+  padding: 0 var(--cp-space-4);
+}
+
+.cp-sticky-atc__product {
+  display: flex;
+  align-items: center;
+  gap: var(--cp-space-3);
+  min-width: 0;
+  flex: 1;
+}
+
+.cp-sticky-atc__thumb {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: var(--cp-radius-sm);
+  flex-shrink: 0;
+}
+
+.cp-sticky-atc__info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.cp-sticky-atc__title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--cp-dark);
+}
+
+.cp-sticky-atc__price {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--cp-burgundy);
+}
+
+.cp-sticky-atc__price s {
+  font-weight: 400;
+  color: var(--cp-muted);
+  font-size: 1.2rem;
+  margin-right: 4px;
+}
+
+.cp-sticky-atc__btn {
+  flex-shrink: 0;
+  padding: var(--cp-space-3) var(--cp-space-5) !important;
+  font-size: 1.4rem !important;
+  font-weight: 700 !important;
+  border-radius: var(--cp-radius-full) !important;
+  background: var(--cp-burgundy) !important;
+  color: var(--cp-cream) !important;
+  box-shadow: var(--cp-shadow-btn);
+  transition: background var(--cp-transition-fast), transform var(--cp-transition-fast);
+  white-space: nowrap;
+}
+
+.cp-sticky-atc__btn:hover {
+  background: var(--cp-burgundy-dark) !important;
+  transform: scale(1.02);
+}
+
+/* Hide sticky ATC on desktop — product page layout has enough room */
+@media (min-width: 990px) {
+  .cp-sticky-atc {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   12. WHATSAPP BUTTON
+   ========================================================================== */
+
+.cp-wa {
+  position: fixed;
+  bottom: 88px; /* above sticky ATC on mobile */
+  right: 20px;
+  background: #25D366;
+  color: #fff;
+  border-radius: var(--cp-radius-full);
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99;
+  box-shadow: 0 4px 14px rgba(37,211,102,.4);
+  text-decoration: none;
+  transition: transform var(--cp-transition-base),
+              box-shadow var(--cp-transition-base);
+}
+
+.cp-wa:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(37,211,102,.5);
+}
+
+.cp-wa__tooltip {
+  position: absolute;
+  right: calc(100% + 10px);
+  background: var(--cp-dark);
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 6px 12px;
+  border-radius: var(--cp-radius-sm);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(6px);
+  transition: opacity var(--cp-transition-base), transform var(--cp-transition-base);
+}
+
+.cp-wa__tooltip::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 5px solid transparent;
+  border-left-color: var(--cp-dark);
+}
+
+.cp-wa:hover .cp-wa__tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (max-width: 749px) {
+  .cp-wa {
+    bottom: calc(var(--cp-sticky-atc-height) + 16px);
+  }
+
+  .cp-wa__tooltip {
+    display: none;
+  }
+}
+
+/* When sticky ATC is not visible, move WA button back down */
+.cp-wa {
+  transition: bottom var(--cp-transition-base),
+              transform var(--cp-transition-base),
+              box-shadow var(--cp-transition-base);
+}
+
+/* ==========================================================================
+   13. GUARANTEE STRIP
+   ========================================================================== */
+
+.cp-guarantee-strip {
+  display: flex;
+  align-items: center;
+  gap: var(--cp-space-3);
+  padding: var(--cp-space-4) var(--cp-space-5);
+  background: var(--cp-cream-light);
+  border: 1px solid var(--cp-cream-dark);
+  border-radius: var(--cp-radius-md);
+  margin: var(--cp-space-4) 0;
+  flex-wrap: wrap;
+}
+
+.cp-guarantee-strip__item {
+  display: flex;
+  align-items: center;
+  gap: var(--cp-space-2);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--cp-mid);
+  white-space: nowrap;
+}
+
+.cp-guarantee-strip__item svg {
+  color: var(--cp-green-success);
+  flex-shrink: 0;
+}
+
+.cp-guarantee-strip__divider {
+  width: 1px;
+  height: 18px;
+  background: var(--cp-cream-dark);
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .cp-guarantee-strip {
+    gap: var(--cp-space-2);
+    padding: var(--cp-space-3) var(--cp-space-4);
+  }
+
+  .cp-guarantee-strip__divider {
+    display: none;
+  }
+
+  .cp-guarantee-strip__item {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+/* ==========================================================================
+   14. URGENCY / SCARCITY BAR
+   ========================================================================== */
+
+.cp-urgency {
+  margin: var(--cp-space-3) 0;
+}
+
+.cp-urgency__stock-warning {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cp-space-2);
+  color: var(--cp-green-success);
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin-bottom: var(--cp-space-2);
+}
+
+.cp-urgency__stock-warning::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cp-green-success);
+  animation: cp-pulse 1.5s infinite;
+  flex-shrink: 0;
+}
+
+@keyframes cp-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.85); }
+}
+
+.cp-urgency__progress-wrap {
+  margin: var(--cp-space-2) 0;
+}
+
+.cp-urgency__progress-bg {
+  background: var(--cp-cream-dark);
+  height: 6px;
+  border-radius: var(--cp-radius-full);
+  overflow: hidden;
+}
+
+.cp-urgency__progress-fill {
+  background: linear-gradient(90deg, var(--cp-burgundy), var(--cp-burgundy-light));
+  height: 6px;
+  border-radius: var(--cp-radius-full);
+  transition: width 1s ease;
+}
+
+.cp-urgency__progress-text {
+  font-size: 1.2rem;
+  color: var(--cp-muted);
+  margin-top: var(--cp-space-1);
+}
+
+/* ==========================================================================
+   15. ANNOUNCEMENT BAR
+   ========================================================================== */
+
+.utility-bar {
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  font-size: 1.3rem;
+}
+
+.announcement-bar__message {
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   16. HOMEPAGE SECTIONS
+   ========================================================================== */
+
+/* Trust strip section (cp-trust-strip) */
+.cp-trust-strip-section {
+  padding: var(--cp-space-6) 0;
+  border-top: 1px solid var(--cp-cream-dark);
+  border-bottom: 1px solid var(--cp-cream-dark);
+  background: var(--cp-cream-light);
+}
+
+/* Image banner text — stronger contrast */
+.banner__content .banner__heading {
+  text-shadow: 0 2px 8px rgba(0,0,0,.25);
+  letter-spacing: -0.02em;
+}
+
+/* Featured collection heading */
+.featured-collection .title {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+}
+
+/* Multicolumn (used for feature icons) */
+.multicolumn-card {
+  text-align: center;
+  padding: var(--cp-space-5);
+}
+
+.multicolumn-card__image-wrapper {
+  margin-bottom: var(--cp-space-4);
+}
+
+/* ==========================================================================
+   17. FOOTER
+   ========================================================================== */
+
+.footer {
+  border-top: 1px solid var(--cp-cream-dark);
+}
+
+.footer-block__heading {
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--cp-space-4);
+}
+
+.footer-block__details-content .link {
+  font-size: 1.4rem;
+  line-height: 2;
+  color: var(--cp-mid);
+  transition: color var(--cp-transition-fast);
+}
+
+.footer-block__details-content .link:hover {
+  color: var(--cp-burgundy);
+}
+
+.footer__copyright {
+  font-size: 1.2rem;
+  color: var(--cp-muted);
+}
+
+/* Payment icons row */
+.list-payment {
+  display: flex;
+  align-items: center;
+  gap: var(--cp-space-2);
+  flex-wrap: wrap;
+}
+
+.list-payment__item svg,
+.list-payment__item img {
+  height: 24px;
+  width: auto;
+  opacity: 0.7;
+}
+
+/* ==========================================================================
+   18. ANIMATIONS
+   ========================================================================== */
+
+/* Fade-up on scroll (used with Shopify's scroll-trigger class) */
+.animate--slide-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.animate--slide-in.animated {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Image hover zoom (cards) */
+@media (hover: hover) {
+  .animate--hover-vertical-lift:hover {
+    transform: translateY(-3px);
+  }
+}
+
+/* ==========================================================================
+   19. MOBILE-SPECIFIC FIXES
+   ========================================================================== */
+
+@media (max-width: 749px) {
+  /* Prevent horizontal scroll */
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Product page media full-width on mobile */
+  .product__media-wrapper {
+    margin-left: calc(-1 * var(--page-width-margin, 1.5rem));
+    margin-right: calc(-1 * var(--page-width-margin, 1.5rem));
+  }
+
+  /* Better tap targets on mobile */
+  .list-menu__item--link {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Quantity input larger on mobile */
+  .quantity__input {
+    min-width: 48px;
+    font-size: 1.6rem;
+    min-height: 44px;
+  }
+
+  /* Bottom padding for sticky ATC */
+  .product__info-container {
+    padding-bottom: calc(var(--cp-sticky-atc-height) + var(--cp-space-5));
+  }
+
+  /* Larger CTA on mobile */
+  .product-form__submit {
+    min-height: 52px;
+    font-size: 1.6rem !important;
+    letter-spacing: 0.02em;
+  }
+
+  /* Image banner — hide text overlay on tiny screens if needed */
+  .banner--content-align-left .banner__content {
+    padding: var(--cp-space-5);
+  }
+}
+
+/* ==========================================================================
+   UTILITY CLASSES
+   ========================================================================== */
+
+.cp-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+
+.cp-text-burgundy { color: var(--cp-burgundy); }
+.cp-text-muted    { color: var(--cp-muted); }
+.cp-bg-cream      { background: var(--cp-cream); }
+.cp-bg-cream-dark { background: var(--cp-cream-dark); }
+
+.cp-divider {
+  height: 1px;
+  background: var(--cp-cream-dark);
+  border: none;
+  margin: var(--cp-space-5) 0;
+}

@@ -27,19 +27,6 @@
 
 
 
-    <!-- TikTok Pixel Code Start -->
-<script>
-!function (w, d, t) {
-  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
-var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
-;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
-
-
-  ttq.load('D2M8S1BC77U9U4KDS0VG');
-  ttq.page();
-}(window, document, 'ttq');
-</script>
-<!-- TikTok Pixel Code End -->
 
     {%- if settings.favicon != blank -%}
       <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
@@ -74,6 +61,65 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     {%- endif -%}
 
     {{ content_for_header }}
+
+    <!-- ============================================================
+         META (FACEBOOK) PIXEL
+         TODO: Replace YOUR_PIXEL_ID below with your actual Pixel ID
+         Get it from: Meta Business Manager → Events Manager → Pixel
+    ============================================================ -->
+    {%- comment -%}
+      Replace YOUR_PIXEL_ID with your real Pixel ID to activate.
+      To get your ID: Meta Business Suite → Events Manager → your pixel → copy the number.
+    {%- endcomment -%}
+    {%- assign meta_pixel_id = '' -%}
+    {%- if meta_pixel_id != '' -%}
+    <script>
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '{{ meta_pixel_id }}');
+      fbq('track', 'PageView');
+      {%- if request.page_type == 'product' -%}
+      fbq('track', 'ViewContent', {
+        content_ids: ['{{ product.id }}'],
+        content_type: 'product',
+        content_name: {{ product.title | json }},
+        value: {{ product.price | money_without_currency | remove: ',' }},
+        currency: '{{ cart.currency.iso_code }}'
+      });
+      {%- endif -%}
+      {%- if request.page_type == 'cart' -%}
+      fbq('track', 'InitiateCheckout', {
+        value: {{ cart.total_price | money_without_currency | remove: ',' }},
+        currency: '{{ cart.currency.iso_code }}',
+        num_items: {{ cart.item_count }}
+      });
+      {%- endif -%}
+    </script>
+    <noscript>
+      <img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id={{ meta_pixel_id }}&ev=PageView&noscript=1" alt="" />
+    </noscript>
+    {%- endif -%}
+
+    <!-- TikTok Pixel Code -->
+    <script>
+    !function (w, d, t) {
+      w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+    var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+    ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+      ttq.load('D2M8S1BC77U9U4KDS0VG');
+      ttq.page();
+    }(window, document, 'ttq');
+    </script>
+    <!-- End TikTok Pixel -->
+
+    {{ 'cp-premium.css' | asset_url | stylesheet_tag }}
 
     {%- liquid
       assign body_font_bold = settings.type_body_font | font_modify: 'weight', 'bold'
@@ -337,17 +383,6 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     <a class="skip-to-content-link button visually-hidden" href="#MainContent">
       {{ 'accessibility.skip_to_text' | t }}
     </a>
-<noscript>
-  <img
-    src="https://analytics.oyatrading.com/matomo.php?idsite=2&rec=1"
-    alt=""
-    width="1"
-    height="1"
-    style="border:0; position:absolute; left:-9999px; top:-9999px;"
-  />
-</noscript>
-
-
 
     {%- if settings.cart_type == 'drawer' -%}
       {%- render 'cart-drawer' -%}
@@ -418,18 +453,26 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     {%- if settings.cart_type == 'drawer' -%}
       <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
-<a href="https://wa.me/212664525095?text={{ 'Bonjour CozzyPaws 👋 Je souhaite commander : ' | url_encode }}{{ product.title | url_encode }}{% if current_variant %} {{ '(' | append: current_variant.title | append: ')' | url_encode }}{% endif %}{{ ' — ' | url_encode }}{{ canonical_url | url_encode }}"
-   class="cp-wa" target="_blank" rel="noopener" aria-label="Commander sur WhatsApp">
-  <!-- icône simple -->
+{%- liquid
+  assign wa_text = 'Bonjour CozzyPaws 👋 Je souhaite des informations sur : '
+  if request.page_type == 'product'
+    assign wa_text = 'Bonjour CozzyPaws 👋 Je voudrais commander : ' | append: product.title
+    if product.selected_or_first_available_variant.title != 'Default Title'
+      assign wa_text = wa_text | append: ' (' | append: product.selected_or_first_available_variant.title | append: ')'
+    endif
+    assign wa_text = wa_text | append: ' — ' | append: canonical_url
+  endif
+-%}
+<a href="https://wa.me/212664525095?text={{ wa_text | url_encode }}"
+   class="cp-wa"
+   target="_blank"
+   rel="noopener"
+   aria-label="Nous contacter sur WhatsApp">
+  <span class="cp-wa__tooltip">Besoin d'aide ?</span>
   <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M20.52 3.48A11.9 11.9 0 0 0 12.06 0C5.56 0 .25 5.31.25 11.84c0 2.08.55 4.1 1.59 5.89L0 24l6.43-1.77a11.8 11.8 0 0 0 5.63 1.43h.01c6.5 0 11.81-5.31 11.81-11.84 0-3.16-1.23-6.13-3.36-8.34ZM12.07 21.8h-.01a9.8 9.8 0 0 1-5-1.37l-.36-.21-3.81 1.05 1.02-3.71-.23-.38a9.78 9.78 0 0 1-1.5-5.13c0-5.4 4.4-9.79 9.81-9.79 2.62 0 5.08 1.02 6.94 2.88a9.76 9.76 0 0 1 2.87 6.92c0 5.41-4.4 9.79-9.82 9.79Zm5.58-7.33c-.3-.15-1.77-.87-2.04-.97-.27-.1-.46-.15-.66.15-.2.3-.76.97-.93 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.46-2.42-1.48-.89-.79-1.49-1.76-1.67-2.06-.17-.3-.02-.47.13-.62.14-.14.31-.35.47-.52.16-.17.21-.3.31-.5.1-.2.06-.37-.02-.52-.08-.15-.66-1.58-.9-2.16-.24-.58-.48-.5-.66-.51-.17-.01-.37-.01-.57-.01s-.52.07-.79.37c-.27.3-1.04 1.02-1.04 2.48s1.07 2.87 1.22 3.07c.15.2 2.1 3.21 5.08 4.5.71.31 1.27.49 1.7.62.72.23 1.38.2 1.9.12.58-.09 1.77-.72 2.02-1.41.25-.7.25-1.29.18-1.41-.07-.12-.27-.2-.56-.35Z"/></svg>
 </a>
-<style>
-.cp-wa{
-  position:fixed;bottom:20px;left:20px;background:#25D366;color:#fff;
-  border-radius:50%;width:55px;height:55px;display:flex;align-items:center;justify-content:center;
-  z-index:9999;box-shadow:0 4px 10px rgba(0,0,0,.2);text-decoration:none
-}
-</style>
+
+{%- render 'sticky-atc' -%}
 
 
   </body>

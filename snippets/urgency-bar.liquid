@@ -1,0 +1,56 @@
+{% comment %}
+  Urgency / Scarcity Bar — CozzyPaws
+  Shows real inventory data when stock < threshold.
+  Progress bar shows % sold based on a configurable reference stock.
+
+  Usage (inside product page section blocks or main-product.liquid):
+    {% render 'urgency-bar', product: product, threshold: 10, stock_ref: 20 %}
+
+  Params:
+    product     — the product object (required)
+    threshold   — show warning below this stock qty (default: 10)
+    stock_ref   — assumed "full stock" reference for % calculation (default: 20)
+{% endcomment %}
+
+{%- liquid
+  assign ub_threshold = threshold | default: 10
+  assign ub_stock_ref = stock_ref | default: 20
+  assign ub_variant = product.selected_or_first_available_variant
+  assign ub_qty = ub_variant.inventory_quantity
+  assign ub_managed = ub_variant.inventory_management
+-%}
+
+{%- if ub_managed == 'shopify' and ub_qty != null and ub_qty > 0 -%}
+  <div class="cp-urgency" id="cp-urgency-{{ section.id }}">
+
+    {%- if ub_qty <= ub_threshold -%}
+      <p class="cp-urgency__stock-warning">
+        {%- if ub_qty == 1 -%}
+          Dernier article en stock !
+        {%- elsif ub_qty <= 3 -%}
+          Plus que {{ ub_qty }} en stock !
+        {%- else -%}
+          Seulement {{ ub_qty }} restants — commandez vite
+        {%- endif -%}
+      </p>
+    {%- endif -%}
+
+    {%- if ub_qty > 0 -%}
+      {%- assign ub_sold = ub_stock_ref | minus: ub_qty -%}
+      {%- if ub_sold < 1 -%}{%- assign ub_sold = 1 -%}{%- endif -%}
+      {%- assign ub_pct = ub_sold | times: 100 | divided_by: ub_stock_ref -%}
+      {%- if ub_pct > 95 -%}{%- assign ub_pct = 95 -%}{%- endif -%}
+      {%- if ub_pct < 10 -%}{%- assign ub_pct = 10 -%}{%- endif -%}
+
+      <div class="cp-urgency__progress-wrap">
+        <div class="cp-urgency__progress-bg" role="progressbar" aria-valuenow="{{ ub_pct }}" aria-valuemin="0" aria-valuemax="100" aria-label="{{ ub_pct }}% vendu">
+          <div class="cp-urgency__progress-fill" style="width:{{ ub_pct }}%"></div>
+        </div>
+        <p class="cp-urgency__progress-text">
+          <strong>{{ ub_pct }}% vendu</strong> — Plus que {{ ub_qty }} article{%- if ub_qty > 1 -%}s{%- endif -%} en stock
+        </p>
+      </div>
+    {%- endif -%}
+
+  </div>
+{%- endif -%}
